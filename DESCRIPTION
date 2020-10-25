@@ -1,0 +1,12 @@
+Package: util
+Title: Utility Functions I Use
+Version: 0.00
+Authors@R: person("Nathan", "Goodman", email = "natg@shore.net", role = c("aut", "cre"))
+Description:A collection of R utility functions I use in my recent repos and blog posts
+Depends: R (>= 3.4.3)
+Imports: 
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+URL: https://github.com/natgoodman/util
+BugReports: https://github.com/natgoodman/util/issues
