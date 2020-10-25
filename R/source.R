@@ -1,10 +1,11 @@
 #################################################################################
 ##
 ## Author:  Nat Goodman
-## Created: 20-05-03
-##          from frecl/R/source.R 20-01-14
+## Created: 20-10-25
+##          from covid/R/source.R created 20-05-03
+##          from frecl/R/source.R created20-01-14
 ##          from bayez/source.R created 19-05-22
-##          from run.R 19-02-18
+##          from run.R created 19-02-18
 ##          from ovrfx.R created 19-02-03 
 ##          from siglo.R created 19-01-01
 ##          from repwr/R/repwr.R created 17-10-05 
@@ -12,7 +13,7 @@
 ##
 ## Copyright (C) 2020 Nat Goodman.
 ## 
-## Source files for frecl documents
+## Source files for util repo
 ##
 ## This software is open source, distributed under the MIT License. See LICENSE
 ## file at https://github.com/natgoodman/NewPro/FDR/LICENSE 
@@ -20,10 +21,9 @@
 #################################################################################
 ## SOURCE=c('R/util.R','R/datman.R','R/doc.R','R/init.R','R/stats.R');
 ## SOURCE=c('R/util.R','R/init.R','R/doc_hiddn.R');
-source('R/util.R');                     # source util first to get 'cq'
-SOURCE=cq(cvdat,dat,data_cvdat,doc,edit,extra,fit,import,import_doh,init,label,pal,pal_yarrr,
-          meta,plot_cvdat,plotm,series,transform,util,util_dat,util_file,util_plot,workflow);
-SOURCE=sapply(SOURCE,function(src) paste0('R/',src,'.R'));
+## source('R/util.R');                     # source util first to get 'cq'
+## SOURCE=cq(dat,file,plot);
+## SOURCE=sapply(SOURCE,function(src) paste0('R/',src,'.R'));
 
 ## ---- source the files ----
 ## source default files. assume README doc until init runs
@@ -53,4 +53,5 @@ source_all=function(files=SOURCE) {
   ## source_files(list.files('R',pattern='^(doc_|dat_).*.R',full.names=T));
   ## if (exists('param.env')) source_doc();
 }
-source_all();
+## application has to run source_all()
+## source_all();
