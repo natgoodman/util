@@ -19,11 +19,12 @@
 ## file at https://github.com/natgoodman/NewPro/FDR/LICENSE 
 ##
 #################################################################################
-## SOURCE=c('R/util.R','R/datman.R','R/doc.R','R/init.R','R/stats.R');
-## SOURCE=c('R/util.R','R/init.R','R/doc_hiddn.R');
-## source('R/util.R');                     # source util first to get 'cq'
-## SOURCE=cq(dat,file,plot);
-## SOURCE=sapply(SOURCE,function(src) paste0('R/',src,'.R'));
+
+## source 'cqcl' first to get 'cq' - needed by application source.R
+## HERE code from stackoverflow.com/questions/13645106. Thx!
+HERE=(function() getSrcFilename(sys.call(sys.nframe()),full.names=TRUE))()
+UTILDIR=dirname(HERE);                  # must do dirname in separate statement for some reason
+source(file.path(UTILDIR,'cqcl.R'))
 
 ## ---- source the files ----
 ## source default files. assume README doc until init runs
@@ -46,7 +47,9 @@ source_ifexists=function(file) if (file.exists(file)) source(file);
 ## source all files
 ## NG 19-09-10: can't call param(doc) in empty workspace - param.env doens't exist
 ## source_all=function(files=SOURCE,doc=param(doc)) {
-source_all=function(files=SOURCE) {
+source_all=function(SOURCE=SOURCE,UTIL=UTIL) {
+  files=c(sapply(SOURCE,function(src) file.path('R',paste0(src,'.R'))),
+          sapply(UTIL,function(util) file.path(UTILDIR,paste0(util,'.R'))));
   source_files(files);
   ## source dat_XXX, doc_XXX files so top level functions defined
   ## NOTE: these top level functions call init which re-sources doc-specific files
