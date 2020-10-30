@@ -26,7 +26,13 @@ BREAKPOINT=function(...,text="",condition=NULL,expr=TRUE,skipCalls=0L) {
 }
 ## traceback with args I like
 tback=function(max.lines=2) traceback(max.lines=max.lines)
-
+## wrappers for Sys.Date, Sys.time to easily spit current date/time into transcript
+today=function(pwd=TRUE) today_(pwd,Sys.Date())
+now=function(pwd=TRUE) now_(pwd,Sys.time())
+today_=now_=function(pwd,msg) {
+  if (pwd) msg=paste(sep=': ',basename(getwd()),msg);
+  paste('>>>>>>>>>>>>>>>>>>>>',msg,'<<<<<<<<<<<<<<<<<<<<');
+}
 ## ---- Dev functions ----
 ## close all graphics devices
 devs.close=function() for (dev in dev.list()) dev.off(dev)
