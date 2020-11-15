@@ -19,7 +19,7 @@
 ##   funfun are additional functions called by fun with ... args
 ## TODO: handle partial matching of ... params
 ## adapted from stackoverflow.com/questions/4124900
-wrap_fun=function(fun,funfun=NULL,...) {
+wrapfun=function(fun,funfun=NULL,...) {
   env=parent.frame(n=1);
   x=ls(envir=env);
   fx=do.call(c,lapply(c(fun,funfun),function(fun) names(formals(fun))));
