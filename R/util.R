@@ -120,8 +120,22 @@ lcfirst=function(x) {
   x;
 }
 ## between, near - to subset sim results. closed on bottom, open on top
-between=function(x,lo,hi,tol=0) x>=lo-tol&x<hi+tol;
+## between=function(x,lo,hi,tol=0) x>=lo-tol&x<hi+tol;
+## NG 21-01-20: to handle non-numeric args, don't do arithmetic if tol==0
+between=function(x,lo,hi,tol=0) if (tol!=0) x>=lo-tol&x<hi+tol else x>=lo&x<hi
 near=function(x,target,tol=.01) between(x,target-tol,target+tol)
+## general between: open, closed on either end
+btwn=function(x,lo,hi,tol=0,open=c(FALSE,TRUE),closed=!open) {
+  if (all(closed)) btwn_cc(x,lo,hi,tol)
+  else if (!any(closed)) btwn_oo(x,lo,hi,tol)
+  else if (closed[1]) btwn_co(x,lo,hi,tol)
+  else btwn_oc(x,lo,hi,tol)
+}
+btwn_cc=function(x,lo,hi,tol=0) if (tol!=0) x>=lo-tol&x<=hi+tol else x>=lo&x<=hi
+btwn_co=function(x,lo,hi,tol=0) if (tol!=0) x>=lo-tol&x<hi+tol else x>=lo&x<hi
+btwn_oc=function(x,lo,hi,tol=0) if (tol!=0) x>lo-tol&x<=hi+tol else x>lo&x<=hi
+btwn_oo=function(x,lo,hi,tol=0) if (tol!=0) x>lo-tol&x<hi+tol else x>lo&x<hi
+
 ## round up or down to nearest multiple of u. from https://grokbase.com/t/r/r-help/125c2v4e14/
 round_up=function(x,u) ceiling(x/u)*u;
 round_dn=function(x,u) floor(x/u)*u;
