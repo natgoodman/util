@@ -26,7 +26,6 @@ gapply=function(groups,e,f) {
     else sapply(eg,function(column) f(column));
   }))
 }
-
 ## apply f to columns or rows of e.
 ## wrapper for apply that avoids simplifying single row results
 capply=function(e,f,...,SIMPLIFY=FALSE,USE.NAMES=TRUE) {
@@ -54,3 +53,7 @@ rapply=function(e,f,...,SIMPLIFY=FALSE,USE.NAMES=TRUE) {
   }
   else f(e,...);
 }
+## row and column functions
+colMedians=function(e,...) capply(e,median,...)
+rowMedians=function(e,...) rapply(e,median,...)
+
