@@ -80,3 +80,20 @@ repv=function(...,LENGTH.OUT=NA,EACH=1,TIMES=1,ENV,NAMES=character(),FILL=NULL) 
   })
   LENGTH.OUT;
 }
+## repeat variables for recycling in parent. like 'repv' but special-cased for recycling
+##   typically used to extend function arguments to same length to avoid recycle warning
+repcycle=recycle=function(...,ENV,NAMES=character()) {
+  dots=match.call(expand.dots=FALSE)$...;
+  names=c(as.character(dots),NAMES);
+  if (missing(ENV)) ENV=parent.frame(n=1);
+  vals=mget(names,envir=ENV);
+  ## calculate desired length
+  lengths=sapply(vals,length);
+  LENGTH.OUT=max(lengths);
+  if (LENGTH.OUT>1) {
+    ## do it!
+    lapply(seq_along(vals),function(i)
+      if (lengths[i]>1) assign(names[i],rep(vals[[i]],length.out=LENGTH.OUT),envir=ENV));
+  }
+  LENGTH.OUT;
+}
