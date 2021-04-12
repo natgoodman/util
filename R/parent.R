@@ -18,6 +18,13 @@
 #################################################################################
 ## ---- Get values from parent ----
 
+## NG 21-02-09: THESE ARE STILL FEEBLE AND/OR BROKEN
+##   'parent' works but is feeble - doesn't do the right thing when function called
+##   inside 'apply' because that introduces new frame
+##   'parall' probably works but gets easily confused by variables added by R when
+##   called inside 'apply'
+##   NEEDS MORE THOUGHT!
+
 ## NG 20-10-19: rename and rewrite the 'parent' functions
 ##   'parent' now does one level dynamic lookup
 ##   'parpar' is 'parent' if exists else 'param'
