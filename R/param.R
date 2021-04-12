@@ -60,11 +60,21 @@ param=function(...,list=character()) {
 ## do it this way until 'list' arg of 'param' function can handle params with new values 
 ## assign(paste(sep='.','extra',what),fun,envir=param.env);
 
-## copy local variables to global - to simplify init
-## NG 19-01-11: used in repwr, not in effit
-assign_global=function() {
-  env=parent.frame(n=1);
-  sapply(ls(envir=env),function(what) assign(what,get(what,envir=env),envir=.GlobalEnv));
+## if called without args, copies parent's local variables to global
+##   used in repwr to simplify init
+## NG 21-03-02: if called with args, copies parent's values for args to global
+assign_global=function(...,list=character()) {
+  dots=match.call(expand.dots=FALSE)$...
+  parent.env=parent.frame(n=1);
+  if (length(dots) &&
+      !all(vapply(dots,function(x) is.atomic(x)||is.symbol(x)||is.character(x),
+                  NA,USE.NAMES=FALSE))) 
+    stop("... must contain atomic data like names or character strings");
+  names=vapply(dots,as.character,"");
+  if (length(names)==0L) names=character();
+  names=c(list,names);
+  if (!length(names)) names=ls(envir=parent.env);
+  sapply(names,function(name) assign(name,get(name,envir=parent.env),envir=.GlobalEnv));
 }
 ## copy local variables to new or existing param environment - to simplify init
 init_param=function() {
