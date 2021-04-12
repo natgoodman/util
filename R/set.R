@@ -19,7 +19,7 @@
 ## set predicates.
 ##   subset from stackoverflow.com/questions/26831041. thx!
 ##   psubset (proper subset) adapted from sets package
-##   equal included ro stylistic consistency
+##   equal included for stylistic consistency
 is_subset=function(x,y) all(x %in% y)
 is_superset=function(x,y) all(y %in% x)
 is_psubset=function(x,y) is_subset(x,y)&(length(x)!=length(y))
@@ -32,6 +32,7 @@ is_equalset=function(x,y) setequal(x,y)
 "%<%"=function(x,y) is_psubset(x,y)
 "%>%"=function(x,y) is_psuperset(x,y)
 "%==%"=function(x,y) is_equalset(x,y)
+"%!=%"=function(x,y) !is_equalset(x,y)
 ## set operators
 ## intersect, difference, union
 "%&%"=function(x,y) intersect(x,y)
