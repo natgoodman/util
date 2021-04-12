@@ -20,6 +20,7 @@
 is_date=function(x) is_class(x,'Date')
 is_POSIXdate=function(x) is_class(x,'POSIXt')
 ## convert date strings we encounter in covid to Dates
+## NG 21-01-20: generalized for 2021 and beyond. never imagined COVID would last this long...
 as_date=function(x) {
   ## R seems to convert dates to numeric when passed through sapply. sigh...
   dates=sapply(x,function(x) {
@@ -28,17 +29,18 @@ as_date=function(x) {
     else {
       if (is.character(x)) {
         ## if (endsWith(x,' UTC')) x=sub(' UTC$','',x); # for DOH >= 20-05-24
-        if (startsWith(x,'20-')) format='%y-%m-%d'
-        else if (startsWith(x,'2020-')) format='%Y-%m-%d'
-        else if (startsWith(x,'2020')) format='%Y%m%d'
-        else if (startsWith(x,'2019')) format='%Y%m%d'
-        else if (endsWith(x,'/20')) format='%m/%d/%y'
+        if (grepl('^2\\d-',x)) format='%y-%m-%d'
+        else if (grepl('^20\\d\\d-',x)) format='%Y-%m-%d'
+        else if (grepl('20\\d\\d',x)) format='%Y%m%d'
+        else if (grepl('/2\\d$',x)) format='%m/%d/%y'
         else stop('Unexpected date format: ',x);
         as.Date(x,format=format);
       }
       ## else BREAKPOINT('Unable to create date from ',x);
       else stop('Unable to create date from ',x);
     }});
+  ## R's as.Date bombs on empty lists. sigh...
+  if (length(dates)==0) dates=integer(0);
   as.Date(dates,origin='1970-01-01');
 }
 ## convert date to version strings we use, eg, 20-05-13
@@ -48,3 +50,5 @@ Weekdays=cq(Sunday,Monday,Tuesday,Wednesday,Thursday,Friday,Saturday);
 dayofweek=Vectorize(function(day) which(Weekdays==day))
 match_day=function(day) match.arg(ucfirst(day),Weekdays)
 inc_day=function(day,i=0) Weekdays[((dayofweek(day)+i-1)%%7)+1]               
+## get date of Sunday for week containing date
+sunday_week=function(date) date-dayofweek(weekdays(date))+1
