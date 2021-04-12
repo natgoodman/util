@@ -54,4 +54,8 @@ ploff=function(dev=dev.png,file=file.png) {
   system(paste('pjto',file));
 }
 ## save R workspace and history
-sv=function() {save.image(); savehistory(); }
+sv=function(do.gc=TRUE) {
+  save.image();
+  savehistory();
+  if (do.gc) gc();
+}
