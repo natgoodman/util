@@ -25,6 +25,8 @@ is_superset=function(x,y) all(y %in% x)
 is_psubset=function(x,y) is_subset(x,y)&(length(x)!=length(y))
 is_psuperset=function(x,y) is_superset(x,y)&(length(x)!=length(y))
 is_equalset=function(x,y) setequal(x,y)
+is_empty=function(x) length(x)==0
+is_nonempty=function(x) length(x)!=0
 ## operator versions of above.
 ## note that some of these conflict with tidyverse. sorry but I don't use tidyverse
 "%<=%"=function(x,y) is_subset(x,y)
