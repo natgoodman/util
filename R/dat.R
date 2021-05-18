@@ -54,8 +54,10 @@ load_=function(base=NULL,file=NULL,suffix=cq(txt,RData)) {
   get(what);                            # return it
 }
 ## read data from txt file - mostly for testing - not guaranteed to work
-read_=function(base=NULL,file=NULL,suffix=cq(txt,RData),stringsAsFactors=FALSE,...) {
-  if (is.null(base)&&is.null(file)) stop("No place to get data: 'base' and 'file' are both NULL");
-  if (is.null(file)) file=resuffix(base,old.suffix=suffix,suffix='txt');
-  read.delim(file,stringsAsFactors=stringsAsFactors,...);
+read_=
+  function(base=NULL,file=NULL,suffix=cq(txt,RData),stringsAsFactors=FALSE,check.names=FALSE,...) {
+    if (is.null(base)&&is.null(file))
+      stop("No place to get data: 'base' and 'file' are both NULL");
+    if (is.null(file)) file=resuffix(base,old.suffix=suffix,suffix='txt');
+    read.delim(file,stringsAsFactors=stringsAsFactors,check.names=check.names,...);
 }
