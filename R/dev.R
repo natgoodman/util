@@ -34,6 +34,9 @@ today_=now_=function(pwd,msg) {
   paste('>>>>>>>>>>>>>>>>>>>>',msg,'<<<<<<<<<<<<<<<<<<<<');
 }
 ## ---- Dev functions ----
+## print status/progress messages
+emit=function(...,sep=' ',cond=TRUE,now=TRUE)
+  if (cond&&length(list(...))>0) print(paste(sep=sep,...,if(now) Sys.time()))
 ## close all graphics devices
 devs.close=function() for (dev in dev.list()) dev.off(dev)
 ## display color palette
@@ -59,3 +62,5 @@ sv=function(do.gc=TRUE) {
   savehistory();
   if (do.gc) gc();
 }
+## close all mysql connections. from stackoverflow.com/questions/17509970. thx!
+dbhs.close=function() lapply(dbListConnections(MySQL()),function(dbh) dbDisconnect(dbh))
