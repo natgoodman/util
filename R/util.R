@@ -40,20 +40,54 @@ paste_id=function(base,id=NULL,sep='.') {
 }  
 
 ## like match.arg but uses general matching and, if several.ok, returns 'em all
+## pmatch_choice=
+##   function(arg,choices,several.ok=T,none.ok=F,start=T,ignore.case=T,perl=F,fixed=F,invert=F) {
+##     ## m=startsWith(choices,arg);
+##     pat=if(start) paste0('^',arg) else arg;
+##     m=grep(pat,choices,ignore.case=ignore.case,perl=perl,value=T,fixed=fixed,invert=invert);
+##     if (length(m)==0&&!none.ok)
+##       stop(paste(sep=' ',"'arg' matched none of",paste(collapse=', ',choices),
+##            "but 'none.ok' is FALSE"));
+##     if (length(m)>1&&!several.ok)
+##       stop(paste(sep=' ',"'arg' matched several of",paste(collapse=', ',choices),
+##                  "but 'several.ok' is FALSE"));
+##     if (length(m)==0) NULL else m;
+##   }
 pmatch_choice=
-  function(arg,choices,several.ok=T,none.ok=F,start=T,ignore.case=T,perl=F,fixed=F,invert=F) {
+  function(arg,choices,several.ok=TRUE,none.ok=FALSE,
+           allseveral.ok=several.ok,allnone.ok=none.ok,
+           start=TRUE,ignore.case=TRUE,perl=FALSE,fixed=FALSE,invert=FALSE) {
     ## m=startsWith(choices,arg);
     pat=if(start) paste0('^',arg) else arg;
-    m=grep(pat,choices,ignore.case=ignore.case,perl=perl,value=T,fixed=fixed,invert=invert);
-    if (length(m)==0&&!none.ok)
-      stop(paste(sep=' ',"'arg' matched none of",paste(collapse=', ',choices),
-           "but 'none.ok' is FALSE"));
-    if (length(m)>1&&!several.ok)
-      stop(paste(sep=' ',"'arg' matched several of",paste(collapse=', ',choices),
-                 "but 'several.ok' is FALSE"));
+    ml=sapply(pat,function(pat)
+      grep(pat,choices,ignore.case=ignore.case,perl=perl,value=T,fixed=fixed,invert=invert),
+      simplify=FALSE);
+    if (!(none.ok&several.ok)) {
+      ## check whether each arg matched uniquely
+      len=sapply(ml,function(m) length(m));
+      bad=(len==0)&!none.ok;
+      if (any(bad))
+        stop(paste(sep=' ',"arg(s)",paste(collapse=', ',arg[bad]),
+                   "matched none of",paste(collapse=', ',choices),
+                   "but 'none.ok' is FALSE"));
+      bad=(len>1)&!several.ok;
+      if (any(bad))
+        stop(paste(sep=' ',"arg(s)",paste(collapse=', ',arg[bad]),
+                   "matched several of",paste(collapse=', ',choices),
+                   "but 'several.ok' is FALSE"));
+    }
+    m=unique(unlist(ml));
+    ## check overall match
+    if (length(m)==0&&!allnone.ok)
+      stop(paste(sep=' ',"arg(s)",paste(collapse=', ',arg),
+                 "matched none of",paste(collapse=', ',choices),
+                 "but 'allnone.ok' is FALSE"));
+    if (length(m)>1&&!allseveral.ok)
+       stop(paste(sep=' ',"arg(s)",paste(collapse=', ',arg),
+                  "matched several of",paste(collapse=', ',choices),
+                  "but 'allseveral.ok' is FALSE"));
     if (length(m)==0) NULL else m;
   }
-
 ## generate sequence from min(x) to max(x). similar to R's 'seq'
 ## x can be vector, matrix, data.frame, list of vectors
 ## when relative=FALSE
