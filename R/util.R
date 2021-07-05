@@ -54,14 +54,21 @@ paste_id=function(base,id=NULL,sep='.') {
 ##     if (length(m)==0) NULL else m;
 ##   }
 pmatch_choice=
-  function(arg,choices,several.ok=TRUE,none.ok=FALSE,
-           allseveral.ok=several.ok,allnone.ok=none.ok,
-           start=TRUE,ignore.case=TRUE,perl=FALSE,fixed=FALSE,invert=FALSE) {
+  function(arg,choices,
+           allseveral.ok=TRUE,allnone.ok=FALSE,several.ok=allseveral.ok,none.ok=allnone.ok,
+           start=TRUE,null.ok=TRUE,simplify=TRUE,
+           ignore.case=TRUE,perl=FALSE,fixed=FALSE,invert=FALSE) {
+    if (is.null(arg)&!null.ok) stop("arg is NULL, but null.ok is FALSE");
+    if (length(arg)<=1) {
+      if (missing(allseveral.ok)) allseveral.ok=several.ok;
+      if (missing(allnone.ok)) allnone.ok=none.ok;
+    }
     ## m=startsWith(choices,arg);
     pat=if(start) paste0('^',arg) else arg;
     ml=sapply(pat,function(pat)
       grep(pat,choices,ignore.case=ignore.case,perl=perl,value=T,fixed=fixed,invert=invert),
-      simplify=FALSE);
+      simplify=FALSE,USE.NAMES=FALSE);
+    names(ml)=arg;
     if (!(none.ok&several.ok)) {
       ## check whether each arg matched uniquely
       len=sapply(ml,function(m) length(m));
@@ -86,7 +93,8 @@ pmatch_choice=
        stop(paste(sep=' ',"arg(s)",paste(collapse=', ',arg),
                   "matched several of",paste(collapse=', ',choices),
                   "but 'allseveral.ok' is FALSE"));
-    if (length(m)==0) NULL else m;
+    if (length(m)==0) NULL
+    else if (simplify) m else ml;
   }
 ## generate sequence from min(x) to max(x). similar to R's 'seq'
 ## x can be vector, matrix, data.frame, list of vectors
