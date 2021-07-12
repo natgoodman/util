@@ -72,3 +72,9 @@ baseonly=function(path,suffix=NULL,keep.dir=TRUE) {
   base=sub(pattern,'',file);
   if (keep.dir) filename(dir,base) else base;
 }
+## extract suffix from path. code adapted from tools::file_ext.
+##   thanks to stackoverflow.com/questions/7779037 for pointing me to file_ext
+suffix=function(path) {
+  pos=regexpr("\\.([[:alnum:]]+)$",path)
+  ifelse(pos>-1L,substring(path,pos+1L),"")
+}
