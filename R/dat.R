@@ -18,36 +18,54 @@
 #################################################################################
 ## ---- Save and Load ----
 ## save data in RData and optionally txt formats
-save_=function(data,base=NULL,save,save.txt=FALSE,file=NULL,suffix=cq(txt,RData)) {
-  if (is.null(base)&&is.null(file)) stop("No place to save data: 'base' and 'file' are both NULL");
-  if (!is.null(file)) {
-    if (!file.exists(file)) stop(paste('File',file,'does not exist'));
-  } else {
-    base=desuffix(base,suffix);
-    file=filename(base=base,suffix='RData');
-  }
-  if ((is.na(save)&!file.exists(file))|(!is.na(save)&save)) {
-    save(data,file=filename(base=base,suffix='RData'));
-    if (save.txt) {
+save_=
+  function(data,base=NULL,save=NA,save.RData=save,save.txt=FALSE,file=NULL,obj.ok=TRUE) {
+    if (is.null(base)&&is.null(file))
+      stop("No place to save data: 'base' and 'file' are both NULL");
+    if (is.null(file)) {
+      ## save RData if args allow
+      file=filename(base=base,suffix='RData');
+      if (ok_to_save(save.RData,file)) save(data,file=file);
+      ## save txt if args allow
       file=filename(base=base,suffix='txt');
-      if (length(dim(data))==2) write.table(data,file=file,sep='\t',quote=F,row.names=F)
-      ## code for saving non-table data adapted from save_tbl
-      else if (is.list(data)) {
-        sink(file); print(data); sink();
+      if (ok_to_save(save.txt,file))
+        save_txt_(data,file=file,obj.ok=obj.ok);
+    } else {
+      ## save RData or txt depending on suffix or flags
+      sfx=suffix(file);
+      if (sfx=='RData'&&ok_to_save(save.RData,file)) save(data,file=file)
+      else if (sfx=='txt'&&ok_to_save(save.txt,file)) save_txt_(data,file=file,obj.ok=obj.ok)
+      else {
+        ## suffix not informative. use 'save' flags to decide format
+        if (!is.na(save.RData)&save.RData) save(data,file=file)
+        else if (!is.na(save.txt)&save.txt) save_txt_(data,file=file,obj.ok=obj.ok)
+        else stop("Unable to determine output format from file name or 'save' flags: ",
+                  nv(file,save,save.txt));
       }
-      else if (is.vector(data)) {
-        names=names(data);
-        if (!is.null(names)) {
-          data=data.frame(name=names,value=as.character(data));
-          write.table(data,file=file,sep='\t',quote=F,row.names=F);
-        } else writeLines(as.character(data),file);
-      }
-      else stop(paste('Unabe to save text for class',class(data),'. Sorry'));
     }
+  }
+ok_to_save=function(save,file) (is.na(save)&!file.exists(file))|(!is.na(save)&save)
+                  
+save_txt_=function(data,file,obj.ok=TRUE) {
+  if (is_2d(data)) write.table(data,file=file,sep='\t',quote=F,row.names=F)
+  else {
+    if (!obj.ok) stop("Trying to save generic object but obj.ok=FALSE")
+    if (is.list(data)) {
+      sink(file);
+      print(data);
+      sink();
+    } else if (is.vector(data)) {
+          names=names(data);
+          if (!is.null(names)) {
+            data=data.frame(name=names,value=as.character(data));
+            write.table(data,file=file,sep='\t',quote=F,row.names=F);
+          } else writeLines(as.character(data),file);
+    }
+    else stop(paste('Unable to save text for class',class(data),'. Sorry'));
   }
 }
 ## load data from RData file
-load_=function(base=NULL,file=NULL,suffix=cq(txt,RData)) {
+load_=function(base=NULL,file=NULL) {
   if (is.null(base)&&is.null(file)) stop("No place to get data: 'base' and 'file' are both NULL");
   if (is.null(file)) file=resuffix(base,old.suffix=suffix,suffix='RData');
   what=load(file=file);                 # what is name of saved data
