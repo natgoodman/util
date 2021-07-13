@@ -67,15 +67,15 @@ save_txt_=function(data,file,obj.ok=TRUE) {
 ## load data from RData file
 load_=function(base=NULL,file=NULL) {
   if (is.null(base)&&is.null(file)) stop("No place to get data: 'base' and 'file' are both NULL");
-  if (is.null(file)) file=resuffix(base,old.suffix=suffix,suffix='RData');
+  if (is.null(file)) file=resuffix(base,suffix='RData');
   what=load(file=file);                 # what is name of saved data
   get(what);                            # return it
 }
 ## read data from txt file - mostly for testing - not guaranteed to work
 read_=
-  function(base=NULL,file=NULL,suffix=cq(txt,RData),stringsAsFactors=FALSE,check.names=FALSE,...) {
+  function(base=NULL,file=NULL,stringsAsFactors=FALSE,check.names=FALSE,...) {
     if (is.null(base)&&is.null(file))
       stop("No place to get data: 'base' and 'file' are both NULL");
-    if (is.null(file)) file=resuffix(base,old.suffix=suffix,suffix='txt');
+    if (is.null(file)) file=resuffix(base,suffix='txt');
     read.delim(file,stringsAsFactors=stringsAsFactors,check.names=check.names,...);
 }
