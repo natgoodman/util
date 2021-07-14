@@ -19,26 +19,27 @@
 ## ---- Save and Load ----
 ## save data in RData and optionally txt formats
 save_=
-  function(data,base=NULL,save=NA,save.RData=save,save.txt=FALSE,file=NULL,obj.ok=TRUE) {
+  function(data,base=NULL,save=NA,save.RData=save,save.txt=FALSE,file=NULL,obj.ok=TRUE,
+           pjto=FALSE) {
     if (is.null(base)&&is.null(file))
       stop("No place to save data: 'base' and 'file' are both NULL");
     if (is.null(file)) {
       ## save RData if args allow
       file=filename(base=base,suffix='RData');
-      if (ok_to_save(save.RData,file)) save(data,file=file);
+      if (ok_to_save(save.RData,file)) save_RData_(data,file=file,pjto=pjto);
       ## save txt if args allow
       file=filename(base=base,suffix='txt');
-      if (ok_to_save(save.txt,file))
-        save_txt_(data,file=file,obj.ok=obj.ok);
+      if (ok_to_save(save.txt,file)) save_txt_(data,file=file,obj.ok=obj.ok,pjto=pjto);
     } else {
       ## save RData or txt depending on suffix or flags
       sfx=suffix(file);
-      if (sfx=='RData'&&ok_to_save(save.RData,file)) save(data,file=file)
-      else if (sfx=='txt'&&ok_to_save(save.txt,file)) save_txt_(data,file=file,obj.ok=obj.ok)
+      if (sfx=='RData'&&ok_to_save(save.RData,file)) save_RData_(data,file=file,pjto=pjto)
+      else if (sfx=='txt'&&ok_to_save(save.txt,file))
+        save_txt_(data,file=file,obj.ok=obj.ok,pjto=pjto)
       else {
         ## suffix not informative. use 'save' flags to decide format
-        if (!is.na(save.RData)&save.RData) save(data,file=file)
-        else if (!is.na(save.txt)&save.txt) save_txt_(data,file=file,obj.ok=obj.ok)
+        if (!is.na(save.RData)&save.RData) save_RData_(data,file=file,pjto=pjto)
+        else if (!is.na(save.txt)&save.txt) save_txt_(data,file=file,obj.ok=obj.ok,pjto=pjto)
         else stop("Unable to determine output format from file name or 'save' flags: ",
                   nv(file,save,save.txt));
       }
@@ -46,7 +47,12 @@ save_=
   }
 ok_to_save=function(save,file) (is.na(save)&!file.exists(file))|(!is.na(save)&save)
                   
-save_txt_=function(data,file,obj.ok=TRUE) {
+save_RData_=function(data,file,pjto=FALSE) {
+  save(data,file=file);
+  if (pjto) system(paste('pjto',file)); # copy to Mac if desired
+  file;
+}
+save_txt_=function(data,file,obj.ok=TRUE,pjto=FALSE) {
   if (is_2d(data)) write.table(data,file=file,sep='\t',quote=F,row.names=F)
   else {
     if (!obj.ok) stop("Trying to save generic object but obj.ok=FALSE")
@@ -63,6 +69,8 @@ save_txt_=function(data,file,obj.ok=TRUE) {
     }
     else stop(paste('Unable to save text for class',class(data),'. Sorry'));
   }
+  if (pjto) system(paste('pjto',file)); # copy to Mac if desired
+  file;
 }
 ## load data from RData file
 load_=function(base=NULL,file=NULL) {
