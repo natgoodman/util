@@ -113,4 +113,9 @@ is_leap=function(year) {
   year=as.numeric(year);
   (year%%4==0)&((year%%100!=0)|(year%%400==0));
 }
-
+## extract year from dates - analogous to R's 'months'
+years=function(date,abbreviate=FALSE) {
+  if (!is_date(date)) date=as_date(date);
+  fmt=if(abbreviate) '%y' else '%Y';
+  format(date,fmt);
+}
