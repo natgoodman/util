@@ -115,7 +115,19 @@ hseg=
     segments(x0=x,x1=x,y0=y0,y1=y,col=col,lty=lty,lwd=lwd);
     if (!is.null(text)) do.call(mtext,label);
   }
-
+## convert margin line numbers to user (regular plot) coordinates
+## from stackoverflow.com/questions/29125019 via DescTools::LineToUser. Thx!!
+line2user=function(line,side) {
+  lh=par('cin')[2]*par('cex')*par('lheight');
+  x_off=diff(grconvertX(0:1,'inches','user'));
+  y_off=diff(grconvertY(0:1,'inches','user'));
+  switch(side,
+         `1`=par('usr')[3]-line*y_off*lh,
+         `2`=par('usr')[1]-line*x_off*lh,
+         `3`=par('usr')[4]+line*y_off*lh,
+         `4`=par('usr')[2]+line*x_off*lh,
+         stop("side must be 1, 2, 3, or 4", call.=FALSE));
+}
 ## display color palette - from util.R
 pal=function(col,border="light gray",...) {
  n=length(col)
