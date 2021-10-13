@@ -178,12 +178,14 @@ btwn_co=function(x,lo,hi,tol=0) if (tol!=0) x>=lo-tol&x<hi+tol else x>=lo&x<hi
 btwn_oc=function(x,lo,hi,tol=0) if (tol!=0) x>lo-tol&x<=hi+tol else x>lo&x<=hi
 btwn_oo=function(x,lo,hi,tol=0) if (tol!=0) x>lo-tol&x<hi+tol else x>lo&x<hi
 
-## round up or down to nearest multiple of u. from https://grokbase.com/t/r/r-help/125c2v4e14/
+## round up or down to nearest multiple of u. from grokbase.com/t/r/r-help/125c2v4e14/. Thx!
 round_up=function(x,u) ceiling(x/u)*u;
 round_dn=function(x,u) floor(x/u)*u;
 ## x can be range or single number (lower bound)
 round_rng=function(x,y,u) 
   if (missing(y)) c(round_dn(x[1],u),round_up(x[2],u)) else c(round_dn(x,u),round_up(y,u))
+## round to nearest multiple of u. adapted from plyr:round_any. Thx!
+round_to=function(x,u) round(x/u)*u
 
 ## pick n items from x approx evenly spaced
 pick=function(x,n.want,n.min=1,rep.ok=FALSE,exclude=NULL) {
