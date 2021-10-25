@@ -152,7 +152,10 @@ is_class=function(x,class) class %in% class(x)
 
 ## not in - based on example in RefMan - more intutive than !%in%
 "%notin%"=function(x,table) match(x,table,nomatch=0)==0
+## change case. emulate Perl functions (since I'm used to these...)
 ## upper/lower case fist character. like the Perl functions
+uc=toupper;
+lc=tolower;
 ucfirst=function(x) {
   substr(x,1,1)=toupper(substr(x,1,1));
   x;
