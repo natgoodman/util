@@ -53,7 +53,7 @@ save_RData_=function(data,file,pjto=FALSE) {
   file;
 }
 save_txt_=function(data,file,obj.ok=TRUE,pjto=FALSE) {
-  if (is_2d(data)) write.table(data,file=file,sep='\t',quote=F,row.names=F)
+  if (is_2d(data)) write.table(data,file=file,sep='\t',quote=FALSE,row.names=FALSE)
   else {
     if (!obj.ok) stop("Trying to save generic object but obj.ok=FALSE")
     if (is.list(data)) {
@@ -64,7 +64,7 @@ save_txt_=function(data,file,obj.ok=TRUE,pjto=FALSE) {
           names=names(data);
           if (!is.null(names)) {
             data=data.frame(name=names,value=as.character(data));
-            write.table(data,file=file,sep='\t',quote=F,row.names=F);
+            write.table(data,file=file,sep='\t',quote=FALSE,row.names=FALSE);
           } else writeLines(as.character(data),file);
     }
     else stop(paste('Unable to save text for class',class(data),'. Sorry'));
