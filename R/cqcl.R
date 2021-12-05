@@ -72,3 +72,11 @@ clc=function(obj,...) {
   class(newobj)=class(obj);
   newobj;
 }
+## add elements to list. direct copy og rlist::list.append github.com/renkun-ken/rlist. Thx!!
+cla=function(.data,...) {
+  if (is.list(.data)) {
+    c(.data,list(...))
+  } else {
+    c(.data,...,recursive=FALSE)
+  }
+}
